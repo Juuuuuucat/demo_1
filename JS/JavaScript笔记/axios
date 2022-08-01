@@ -1,0 +1,153 @@
+Axios就是一个基于promise的网络请求库，可以在node.js和浏览器中使用
+  在服务端使用node.js的http模块 （const http = require('http')）
+  在客户端使用XMLHttpRequests
+一、基本用例
+  1、发起一个get请求
+    const axios = require('axios');
+    axios.get('url/参数'); //这一步也可以写为axios.get('url',{params:{ .. }})，视情况而定
+    .then(function (response){
+      //处理成功情况
+      console.log(response);
+    })
+    .catch(function (error){
+      //处理错误情况
+      console.log(error);
+    })
+    .then(function (){
+      //总是会执行
+    })
+  2、发起一个post请求
+    axios.post('url',{数据(键值对)}).then(function (response){
+      console.log(response);
+    }).catch(function (error){
+      console.log(error);
+    })
+  3、可以向axios传递相关配置来创建请求  
+    一、axios(config)
+        axios({
+          method:'post',
+          url:'/ex/123',
+          data:{
+            first:'Fred',
+            last:'Lres'
+          }
+        })
+    二、axios(url[,config])
+        axios('/ex/123'); // 默认发起一个get请求
+    三、为了方便，所有支持的请求方法都有别名
+        axios.get(url[,config])
+        axios.post(url[,data[,config]])
+        axios.request(config)
+        axios.delete(url[,config])
+        axios.put(url[,data[,config]])...
+        在使用别名方法时，url、method、data这些属性都不必在配置中指定
+二、创建拥有通用配置的axios实例
+  如果我们要使用多个axios，需要配置url、header、type等等，那么我们就面临写多个配置的问题，这时可以通过创建一个拥有通用配置的axios实例来解决
+    axios.create([config])
+  例如：
+    const instance = axios.create({
+      baseURL: 'https://ss/s/s/',
+      timeout: 1000,
+      headers: {'X-Custom-Header':'foobar'}
+    })
+  instance实例可用的方法如下，指定的配置将与实例的配置合并:
+    instance.get(url[,config])
+    instance.post(url[,data[,config]])
+    instance.request(config)
+    instance.delete(url[,config])
+    instance.put(url[,data[,config]])...
+三、请求配置config
+  只有url是必需的，如果没有指定method，默认为get请求
+  {
+    url: '/user', //用于请求的服务器url
+    method: 'get',
+    baseURL: 'https://some/api/', //baseURL自动加在url前面，除非url是一个绝对url
+
+    ;//transformRequest允许在向服务器发送前，修改请求数据，只能用于put、post、patch这几个请求；
+    transformRequest: [function (data, headers){
+      //对发送的data进行任意转换处理
+      return data;
+    }]
+
+    ;//transformResponse在传递给then或catch前，允许修改响应数据
+    transformResponse: [function (data){
+      //对接受的data进行任意转换处理
+      return data;
+    }]
+
+    ;//data是作为请求体被发送的数据
+
+    data: {
+    }
+    ...
+  }
+  指定默认配置，将作用于每个请求。例如全局axios默认值：
+    axios.defaults.baseURL = 'https://s';
+    axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+    axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+  还可以创建实例时配置默认值：
+    const instance = axios.create({
+      baseURL: 'https://s'
+    })
+  这些配置将会按优先级进行合并，默认值 < 实例的default属性 < 请求的config参数
+四、响应结构
+  一个请求的响应包含以下信息
+  {
+    data: {},          //服务器提供的响应数据
+    status: 200,       //服务器响应的http状态码  
+    statusText: 'OK',  //服务器响应的http状态信息
+    headers: {},       //服务器响应头，所有的header名称都是小写，而且可以使用方括号语法访问，例如: response.headers['content-type']
+    config: {},        //axios请求的配置信息
+    request: {}        //生成这个响应的请求，在客户端是XMLHttpRequests实例，在node.js中是最后一个ClientRequest实例
+  }
+五、拦截器
+  在请求或响应被then或catch处理前拦截它们。在请求之前进行一些配置，比如是否需要设置token...。在响应之后对数据进行一些处理，比如响应一些报错信息
+    ;//添加请求拦截器
+    axios.interceptors.request.use(function (config){
+      //在发送请求前做些什么
+      return config;
+    }, function(error){
+      //对请求错误做些什么
+      return Promise.reject(error);
+    })
+    ;//添加响应拦截器
+    axios.interceptors.response.use(function (response){
+      ;//2xx范围内的状态码都会触发该函数。对响应数据做些什么
+      return response;
+    }, function(error){
+      ;//超出2xx范围的状态码都会触发该函数。对响应错误做点什么
+      return Promise.reject(error);
+    })
+  稍后移除拦截器：
+    const myInterceptor = axios.interceptors.request.use(function (){});
+    axios.interceptors.request.eject(myInterceptor);
+  给自定义的axios实例添加拦截器：
+    const instance = axios.create();
+    instance.interceptors.request.use(function(){});
+六、错误处理
+  .catch(function (error){
+    if (error.response){ //请求成功发出且服务器也响应了状态码，但是状态码超出了2xx的范围
+      console.log(error.response.data)
+
+    } else if (error.request){ //请求已经成功发起，但是没有收到响应
+      //error.request在浏览器中是XMLHttpRequest实例，在node.js中是http.ClientRequest实例
+
+    } else { //发送请求时出了点问题
+
+    }
+  })
+  
+  axios.get('url',{
+    validateStatus: function (status){  //validateStatus配置选项，可以自定义抛出错误的HTTP code
+      return status < 500;
+    }
+  }).catch(function(error){
+    console.log(error.toJSON())  //使用toJSON方法可以获取更多关于HTTP错误的信息
+  })
+  
+七、取消请求
+  const controller = new AbortController();
+  axios.get('url',{
+    signal: controller.signal
+  }).then(function(response){ });
+  controller.abort(); //取消请求

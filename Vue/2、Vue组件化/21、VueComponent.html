@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>非单文件组件</title>
+  <script src="../vue.js"></script>
+</head>
+<body>
+<!-- 
+  关于VueComponent：
+    1、school组件本质是一个名为VueComponent的构造函数，且不是程序员定义的，是Vue.extend生成的
+    2、只需要写<school></school>或<school/>，Vue解析时就会自动创建组件的实例对象，也就是Vue帮我们执行的new VueComponent(options)
+    3、特别注意：每次调用Vue.extend，返回的都是一个全新的VueComponent
+    4、关于this的指向
+      a、new Vue(options)配置中：
+        data函数、methods函数、computed函数...它们的this均是Vue实例对象（vm）
+      b、组件配置中：
+        data函数、methods函数、computed函数...它们的this均是VueComponent实例对象，组件实例对象（vc）
+  一个重要的内置关系：
+    a、Vue.prototype === VueComponent.prototype.__proto__
+        //__proto__是实例的隐式原型属性，prototype是函数的显式原型属性，两个都是原型对象，一般通过显式原型属性操作原型对象
+    b、vc相当于可复用的vm，有一点点的区别。由于vm上面有许多的方法和属性，这样就可以做到，vm能用的vc也能用
+ -->
+  <div id="root">
+    <school></school>
+  </div>
+  <script>
+    Vue.config.productionTip = false //关闭vue启动的生产提示
+
+    const school = Vue.extend({
+      data(){
+        return {
+          schoolName:'旺旺学院',
+          address:'Bili',
+        }
+      },
+      template:`
+        <div>
+          <h2>学校名称：{{schoolName}}</h2>
+          <h2>学校地址：{{address}}</h2>
+        </div>
+      `
+    })
+
+    console.log(school) //输出VueComponent函数
+
+    new Vue({
+      el: '#root',
+      components:{
+        school
+      }
+    })
+  </script>
+</body>
+</html>

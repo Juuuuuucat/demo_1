@@ -1,0 +1,108 @@
+对象是一组无序的相关属性和方法的集合
+利用构造函数创建对象：
+    function 构造函数名 {
+        this.属性 = 值;
+        this.方法 = function(){}
+        //构造函数不需要return
+    }
+然后通过 new 构造函数名(); 创建
+var xiaoming = {
+    name: '小明',
+    birth: 1990,
+    'm-school': 'No.1 Middle School',
+    height: 1.70,
+    weight: 65,
+    score: null,
+    say: function(){ //方法冒号后面跟的是匿名函数
+        //执行代码
+    }
+};
+ES6中允许在大括号里面，直接写入变量和函数，作为对象的属性和方法
+    const name = '小明';
+    const birth = 1990;
+    const score = null;
+    let xiaoming = {
+        name,
+        birth,
+        score,
+        say(){
+            //执行代码
+        }
+    }
+访问对象的属性是通过obj.prop或obj['prop'](属性名必须是一个有效的变量名;如果不是，就需要用''括起来，比如上面的'm-school'，此时访问这个属性必须使用xiaoming['m-school'])
+如果访问一个不存在的属性，返回undefined
+
+Vue双向绑定原理
+1、Object.defineProperty(obj, prop, description) //定义新属性或修改原有属性
+    obj是要修改属性的对象
+    prop是要修改或添加的属性
+    description是一些说明，以对象的形式，设置属性的值、是否可重写、是否可删除、是否可枚举等
+    {
+        value: 要修改的值,      //属性的值
+        writable: false(默认),  //控制该属性是否可被修改，默认不可以
+        enumerable:true,    //控制属性是否可被枚举，默认不可以
+        configurable:true   //控制属性是否可被删除，默认不可以
+        -----------------------------------------
+        //当读取obj的prop属性时，get函数(getter)就会被调用，且返回值就是prop的值
+        get(){
+            console.log('有人读取prop属性了');
+            return x;
+        },
+        //当修改obj的prop属性时，set函数(setter)就会被调用，接收的参数就是修改的具体值
+        set(value){
+            console.log('有人修改了prop值');
+            x = value;
+        }
+    }
+2、Object.keys(obj) //获取对象自身所有的属性，效果类似for..in；返回一个由属性名组成的数组
+删除属性: delete obj.prop
+检测对象是否拥有一个属性,可以用in： ('prop' in obj)
+    有就返回true,没有就false
+    注意，如果in判断一个属性存在，这个属性不一定是这个对象的，可能是继承得到的
+判断一个属性是否是这个对象自身拥有的,而不是原型链上的属性,可以用hasOwnProperty()方法 (obj.hasOwnProperty('prop')是唯一一个处理属性但是不查找原型链的函数)
+
+因此遍历对象可以这样写：
+    for(let k in obj){ 
+    //for in循环在查找对象属性时遍历原型链上的所有属性
+        if(obj.hasOwnProperty(k)){
+        //利用hasOwnProperty过滤属性；推荐使用
+            console.log(obj[k]);
+        }
+    }
+
+由于对象的键必须是字符串，但实际上Number或者其他数据类型作为键也是合理的，因此ES6规范引入了新的数据类型Map
+
+一、Map也是一组键值对的结构，初始化需要一个二维数组，或者直接初始化一个空Map
+    var m = new Map([['m1',2],['m2',4],...])
+    var m = new Map()
+    m.set('m3',4) //添加新的key-value
+    m.has('key')  //是否存在键'key',有就返回true,没有false
+    m.get('key')  //得到该键对应的值,没有键就返回undefined
+    m.delete('key')  //删除键值对
+
+二、Set也是一组key的集合,但没有value。key也不能重复;初始化需要一个Array作为输入，或者直接初始化一个空Set
+    var s2 = new Set([1, 2, 3, 3]); //Set{1,2,3} 重复元素自动被过滤
+    var s1 = new Set(); // 空Set
+    s1.size // 0 表示有几个值
+    s1.add(4) //添加元素，可以重复添加，但不会有效果
+    s1.delete(3) //删除元素，返回true或(删除一个不存在的值)false
+    s1.has(4) //检测是否有这个值，返回true或false
+    s1.clear() //清空s1中的值，没有返回值
+    利用let arr = [...s1]; 将s1变为数组
+
+遍历Array可以采用下标循环,但Map和Set不可以。为了统一集合类型,ES6引入了新的iterable类型 (String、Array、Map和Set都属于iterable类型。)iterator是一种机制，一种接口（接口在JS里面就是对象的属性），为各种不同的数据结构提供统一的访问机制。任何实现iterable接口的对象都有一个Symbol.iterator属性，这个属性引用默认迭代器。
+    具有iterable类型的集合可以通过(for..of..)循环来遍历。
+    for( var i of m){}
+    for(var j of s){}
+    for(var k of arr){}
+
+for..in循环实际上遍历的是对象的属性,Array实际上也是对象，它的每个元素的“索引”被视为一个属性，如果手动给Array添加额外的属性，则for..in循环会把该属性也包括在内，而Array的length属性却没有。
+而for..of循环只循环集合本身的元素。
+
+更好的方式是直接使用iterable内置的forEach方法
+    forEach接收一个函数，没有返回值，本质上等同于for循环，对每一项执行function函数
+        数组:arr.forEach(function(value,index,array){//..})// element:指向当前元素；index:指向当前索引；array:指向Array对象本身
+        Map: m.forEach(function(value,key,map){//..})
+        Set: s.forEach(function(value,value,set){//}) //前两个参数都是元素本身
+    如果对某些参数不感兴趣，可以忽略，例如：
+        arr.forEach(function(element){//..})

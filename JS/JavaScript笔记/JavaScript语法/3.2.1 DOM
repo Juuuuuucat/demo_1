@@ -1,0 +1,131 @@
+一、DOM简介
+    DOM(Document Object Model)文档对象模型，是w3c组织推荐的处理可扩展标记语言(html或xml)的标准“编程接口”。DOM把页面中的所有内容都看作对象，通过这些DOM接口可以改变网页的内容、结构和样式。
+    HTML文档被浏览器解析后就是一棵DOM树，要改变HTML的结构，就需要通过JavaScript代码来操作DOM。
+二、获取节点
+    在操作一个DOM节点前，需要通过各种方式先拿到DOM节点：
+        1、document.getElementById()（由于ID在HTML文档中是唯一的，所以它可以直接定位唯一的一个DOM节点, 返回的是一个元素对象，没有找到就是null）
+        2、element.getElementByTagName() //这个element可以是document，也可以是一个父元素，父元素必须是单个对象，然后获取子元素中符合条件的元素，返回的是获取过来元素对象的集合，以伪数组的形式存储，如果没有就返回空的伪数组
+       3、getElementByClassName('类名')。（总是返回一组DOM节点，要精确地选择DOM，可以先定位父节点，再从父节点开始选择，以缩小范围：document.getElementById('father').getElementByTagName('p')...）
+        需要注意，文档页面从上往下加载，所以要先有标签，script写在标签下面。
+       
+        （推荐）4、document.querySelector('选择器') //   返回指定选择器返回的第一个元素对象
+        document.querySelectorAll('选择器') //返回指定选择器的所有元素对象集合
+        5、document.body; //获取body元素
+        document.documentElement; //获取HTML元素
+            “严格来讲，这里的DOM节点是指Element(页面中的所有标签都是元素)，但DOM节点实际上是Node(网页中的所有内容都是节点：标签、属性、文本、注释等)，但是，绝大多数时候我们只关心Element，也就是实际控制页面结构的Node，其他Node忽略。根节点Document已经自动绑定为全局变量document（DOM把以上内容都看作对象）”
+    获取元素属性值：
+        1、element.属性 //获取元素自身的属性 //= '值' 可以修改属性值，行内
+        2、element.getAttribute('属性') //可以获取自定义属性 //element.setAttribute('属性','值'); //修改属性值
+            H5规定自定义属性“data-属性”作为属性名,然后就可以用element.dataset.属性 或者 element.dataset['属性']来获取自定义属性（dataset是一个集合，里面存放了所有以data开头的自定义属性）
+            如果自定义属性中有多个-连接的单词，获取的时候采用驼峰命名法
+        3、element.removeAttribute('属性') //移除属性值
+    node.parentNode可以返回某节点的父节点，注意是最近的一个父节点，如果没有就返回null
+    node.childNode返回所有的子节点，注意包括元素节点，文本节点等。可以通过nodeType判断，不提倡使用，可以使用children获取所有元素子节点。
+        firstChild获取第一个子节点，注意包括元素节点，文本节点等；firstElementChild返回第一个元素节点，但是有兼容性问题
+        lastChild获取最后一个子节点，注意包括元素节点，文本节点等；lastElementChild返回第一个元素节点
+    node.previousElementSibling/nextElementSibling上一个/下一个兄弟节点
+三、创建节点
+    1、createElement('tagName')：创建新元素，接收一个参数，即要创建元素的标签名
+    2、document.write('内容'); 直接将内容写入页面的内容流，但是文档流执行完毕，则它会导致页面全部重绘
+    2、createTextNode("内容")：创建一个文本节点
+    3、createDocumentFragment()：创建一个文档碎片，它表示一种轻量级的文档，主要是用来存储临时节点，然后把文档碎片的内容一次性添加到DOM中(当请求把一个DocumentFragment节点插入文档数时，插入是它的所有子孙节点)
+    4、createAttribute('属性')：创建属性节点，可以是自定义属性
+
+四、更新DOM
+    先拿到DOM节点，然后可以对它进行修改：
+        1、element.innerText //不带参数可以获取内容，带参数就直接修改内容
+        标签内部的全部内容，不带element标签，也不识别内容内的标签，同时空格和换行也会去掉
+        2、element.innerHTML //不带参数可以获取内容，带参数就直接修改内容；不会导致页面全部重绘
+        补充：innerHTML可以用来创建元素，在创建多个元素效率更高（不要拼接字符串，采用数组形式拼接）结构稍微复杂；而使用createElement创建多个元素效率稍低一点点，但是结构更清晰。
+        如果内容中包含标签，识别标签，保留空格和换行
+            用HTML时要注意，是否需要写入HTML，如果写入的字符串是通过网络拿到的，要注意对字符编码来避免XSS攻击（XSS是一种代码注入攻击。攻击者通过在目标网站上注入恶意脚本，使之在用户浏览器上运行。利用这些恶意脚本，攻击者可获取用户的敏感信息如cookie、sessionID等，进而危害数据安全）
+        3、document.getElementByTagName('img').src = "./..." 可以修改图片路径
+            img.title = "xxx" 修改悬停内容
+        4、修改表单
+            input.value('ccc') //修改表单里的值，不能用innerHTML，因为它是普通盒子div里面的内容
+            btn.disabled = true //禁用按钮
+        2、textContent属性：可以自动对字符串进行HTML编码，保证无法设置任何HTML标签
+        两者的区别在于：读取属性时，innerText不返回隐藏元素的文本，而textContent返回所有文本
+        3、修改样式
+        element.style.属性 //产生的是行内样式，权重比较高
+        element.className = '类名' //如果样式比较多，一个个列出来比较麻烦，可以先在CSS中写好一个类名并定义样式，然后再在script中设置修改为那个类名，这个类名会覆盖原来的类名。可以使用多类名。 
+    排他思想：如果有同一组元素，我们想要某一个元素实现某种样式，需要用到循环的排他思想算法：
+        1、所有元素全部清除样式
+        2、再给当前元素设置样式
+        3、注意顺序，先干掉其他人，再设置自己
+三、插入DOM
+    如果该DOM节点是空的，可以直接使用innerHTML；但是当这个节点不为空，再使用innerHtml会直接替换掉原来的所有子节点。
+    1、appendChild：
+        father.appendChild(son) //把一个节点添加到父节点的最后一个子节点(这个节点首先会从原先的位置删除，再插入到新的位置)
+    2、insertBefore
+        parent.insertBefore(child,指定元素) //child会插入到指定元素之前；重点是拿到一个‘参考子节点’的引用
+    3、setAttribute('属性名','属性值')
+        在指定元素中添加一个属性节点，如果元素中已有该属性则改变属性值
+四、删除DOM
+    调用父节点的node.removeChild[第几个孩子]方法。删除后的节点虽然不在文档树中了，但其实它还在内存中，可以随时再次被添加到别的位置。
+    当需要遍历一个父节点的子节点并进行删除时，要注意，children属性是一个只读属性，并且它在子节点变化时会实时更新。
+五、复制(克隆)节点
+    node.cloneNode() //该方法返回调用方法节点的一个副本。如果括号参数为空或false，则只复制节点本身，不复制里面的子节点；如果括号为true，则会复制节点本身以及里面所有的子节点
+六、JS使我们有能力创建动态页面，而事件是可以被JS侦测到的行为，也就是：触发-响应机制。
+网页中的每个元素都可以产生某些可以触发JS的事件，例如用户点击某按钮产生一个事件，然后去执行某些操作。
+事件由三部分组成：
+    1、事件源，事件被触发的对象，谁
+    2、事件类型，如何触发的什么事件，鼠标点击还是键盘按下
+    3、事件处理程序，要做什么
+因此执行事件的步骤：获取事件源，绑定(注册)事件，添加事件处理程序。例如：
+    var btn = document.getElementById('divb');
+    btn.onclick = function(){ //事件源.事件类型 = 事件处理程序
+        //事件处理
+    }
+    鼠标事件一般有：
+        onclick：鼠标点击左键触发
+        onmouseover：鼠标经过触发
+        onmouseout：鼠标离开触发
+        onfocus：获得鼠标焦点触发
+        onblur：失去鼠标焦点触发
+        onmousemove：鼠标移动触发
+        onmouseup：鼠标弹起触发，也就是鼠标任意一个键被松开触发
+        onmousedown：鼠标按下触发
+    当鼠标移动到元素上时就会触发mouseenter事件
+    mouseover鼠标经过自身盒子会触发，经过子盒子还会触发；这是因为在经过子盒子的时候，子盒子得到事件就会向上冒泡，又触发了父盒子的事件
+    而mouseenter只会经过自身盒子触发是因为mouseenter不会冒泡
+    跟mouseenter搭配鼠标离开mousemove同样不会冒泡
+七、事件（高级）
+1、注册事件（绑定事件）：给元素添加事件，有两种方式：传统方式(⬆)和方法监听注册方式
+传统方式：利用on开头的事件onclick，具有唯一性，同一个元素的同一个事件只能设置一个处理函数，最后注册的处理函数将会覆盖前面注册的处理函数
+方法监听注册方式：
+    eventTarget.addEventListener(type,listener[,useCapture]); //将指定的监听器注册到eventTarget(目标对象)上，当该对象触发指定的事件时(type: 事件类型字符串，click、mousemove等，这里没有on，注意加引号),就执行事件处理函数（listener），useCapture是可选的，布尔值，默认false处于冒泡阶段，如果是true则处于捕获阶段
+    同一个元素同一个事件可以添加多个侦听器(事件处理程序)
+2、删除事件（解绑事件）：
+    传统方式解绑：eventTarget.onclick = null;
+    方法监听注册方式解绑：eventTarget.removeEventListener(type,listener[,useCapture])
+3、DOM事件流
+事件流描述的是从页面中接受事件的顺序，事件发生时会在元素节点之间按照特定的顺序传播
+    DOM事件流分为3个阶段：捕获阶段、当前目标阶段、冒泡阶段。JS代码中只能执行捕获或者冒泡其中的一个阶段，一般我们更关注事件冒泡。
+事件冒泡：IE最早提出，事件开始时由最具体的元素接收，然后逐级向上传播到DOM顶层节点的过程。（有些事件是没有冒泡的，比如onblur、onfocus等；onclick和attachEvent只能得到冒泡阶段）
+事件捕获：网景最早提出，由DOM顶层节点开始，逐级向下传播到最具体的元素接受的过程。
+4、事件对象：写到侦听函数小括号里，相当于形参，一般写成event： btn.onclick = function(event){ //.. } 
+    事件对象只有有了事件才会存在，当我们注册事件时，系统会自动创建event对象，依次传递给事件监听器，并且我们不需要给event对象传递参数。是事件的一系列相关数据的集合，比如鼠标点击事件，就包含了鼠标的相关信息，鼠标坐标等；再比如键盘事件，就包含了键盘事件的信息，判断用户按下了哪个键等
+    event对象有一个属性target，event.target返回的是触发这个事件的对象(元素)；而this返回的是绑定这个事件的对象
+    阻止事件的默认行为，比如让链接不跳转，提交按钮不提交等event.preventDefault();
+5、阻止事件冒泡：因为事件冒泡本身的特性，会带来坏处也会带来好处，需要灵活处理
+    使用事件对象的stopPropagation()方法
+6、事件委托(代理)
+程序中有如此场景一个ul里有很多li，点击每个li都会弹出对话框，以前需要给每个li注册事件，利用循环，但是访问DOM的次数越多，就会延长整个页面的交互就绪时间。(事件委托也称为事件代理，在jQuery里面称为事件委派)
+    原理：不给每个子节点单独设置事件监听器，而是将事件监听器设置在其父结点上，然后利用冒泡原理影响设置每个子节点：给ul注册事件，然后利用事件对象的target来找到当前点击的li，因为点击li，事件会冒泡到ul上，然后触发事件监听器。这样我们只操作了一次DOM，提高了程序的性能
+7、鼠标事件对象
+event对象代表事件的状态，跟事件相关的一系列信息的整合。现阶段我们主要是用鼠标事件对象MouseEvent和键盘事件对象KeyboardEvent
+通过鼠标事件对象得到坐标：
+    1、event.clientX和event.clientY
+    得到鼠标在可视区域的坐标
+    2、event.pageX和event.pageY
+    得到鼠标在整个页面文档的坐标，不受可视区域限制
+    3、event.screenX和event.screenY
+    得到鼠标相对于电脑屏幕上的坐标
+常用键盘事件：
+    1、onkeyup 某个键盘按键被松开时触发
+    2、onkeydown 某个键盘按键被按下时触发
+    3、onkeypress 某个键盘按键被按下时触发，但是不识别功能键ctrl、shift、箭头等
+    注意1、如果使用addEventListener不需要加on。三个事件的执行顺序是keydown--> keypress--> keyup
+    注意2、keydown和keypress在文本框里面的特点：他们两个事件触发的时候，文字还没有落入文本框中；而keyup触发时，文字已经落入文本框中了
+    4、event.keyCode //得到相应键的ASCII码值，注意keyup和keydown是不区分字母大小写，返回的都是大写的ASCII码值；keypress区分大小写

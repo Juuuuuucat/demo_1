@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+</head>
+<body>
+  <div id="app">
+    <span>这个会改变吗: {{ msg }}</span>
+    <span v-html="msg"></span>
+    <p id="{{da2}}">ee</p>
+    <h2 v-pre>初始化的n值是</h2>
+    <h2>当前n值是：{{n}}</h2>
+    <button @click="n++">点我+1</button>
+  </div>
+  <script>
+    //一个数据对象
+    var data = { a: 1}
+
+    //加入到Vue实例中
+    var vm = new Vue({
+      data: data,
+    })
+    console.log(vm.a == data.a)
+    //当数据改变时，视图会进行重渲染
+    //只有当实例被创建时就已经存在于data中的属性才是响应式的，也就是说如果在后面再添加一个新的属性，那么对这个属性的改动将不会触发任何视图的更新
+    var app = new Vue({
+      el: '#app',
+      data: {
+        n: 0,
+        da2: 1,
+        msg: '<span style="color: red">red{{da2}}</span>'
+      }
+    })
+  </script>
+</body>
+</html>

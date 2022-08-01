@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+</head>
+<body>
+  <div id="root">
+    <!-- 第三步：编写组件标签 -->
+    <school></school>
+    <helloi></helloi>
+    <hr>
+  </div>
+<script>
+    //第一步:创建student组件
+    const student = Vue.extend({ 
+    template: `
+    <div>
+      <h2>姓名：{{personName}}</h2>
+      <h2>年龄：{{age}}</h2>
+    </div>
+    `,
+    data(){
+      return {
+        personName: '张三',
+        age: '18',
+      }
+    }
+  })
+  //第一步:创建school组件
+  const school = Vue.extend({ //在之前Vue实例中的data、methods、watch等属性都可以在这里写
+    //组件定义时，一定不要写el配置项，因为最后所有的组件都会被一个vm管理，由vm中的el决定服务于哪个容器
+    // name: 'example', //指定了这个组件在开发者工具中查看的时候的名字，不影响别的
+    template: `
+      <div>
+        <h2>名称：{{schoolName}}</h2>
+        <h2>地址：{{adress}}</h2>
+        <student></student>
+
+      </div>
+    `,
+    data(){
+      //组件的data为什么一定要是函数，因为在js中对象是有引用关系的，而我们利用函数返回对象，这些对象之间没有关联
+      return {
+        schoolName: 'b站',
+        adress: '河南',
+      }
+    },
+    components: {
+      student,
+    }
+  })
+  console.log(school)
+
+  const hello = {
+    template: `
+    <div>
+      <h2>hello：{{name}}</h2>
+    </div>
+    `,
+    data(){
+      return {
+        name: 'Tom'
+      }
+    }
+  }
+  //全局注册（'组件名', 组件定义）
+  Vue.component('helloi',hello)
+
+    new Vue({
+      el: '#root',
+      //第二步：注册组件（局部注册），是靠实例中传入components选项
+      components: {
+        //组件名:刚才创建的Vue.extend
+        school,
+       
+      }
+    })
+  </script>
+</body>
+</html>

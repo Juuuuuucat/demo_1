@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>取消请求</title>
+</head>
+<body>
+  <button>发送请求</button>
+  <button>取消请求</button>
+  <script>
+    const btns = document.querySelectorAll('button')
+    let x = null
+    //标识变量
+    let isSend = false
+    btns[0].addEventListener('click',function(){
+      if(isSend){
+        x.abort()
+      }
+      x = new XMLHttpRequest()
+      isSend = true
+      x.open('get','http://127.0.0.1:8000/delay')
+      x.send()
+      x.onreadystatechange = function(){
+        if(x.readyState === 4){
+          isSend = false
+        }
+      }
+    })
+    btns[1].addEventListener('click',function(){
+      x.abort() //取消请求
+    })
+  </script>
+</body>
+</html>

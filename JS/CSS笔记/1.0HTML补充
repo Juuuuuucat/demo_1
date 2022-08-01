@@ -1,0 +1,11 @@
+1、SEO：搜索引擎优化，也就是让这个网页在搜索引擎搜索结果中排名靠前
+    提升SEO的常见方法：
+        竞价排名（花钱，百度后排名靠前的广告）
+        网页制作成html后缀
+        标签语义化，在合适的位置使用合适的标签
+2、SEO三大标签
+    网页标题：<title>
+    网页描述：<meta name="description" content="...">
+    关键字：<meta name="keywords" content="...">
+3、网页标签图标
+    <link rel="shortcut ico" href="./.." type="image/x-icon">

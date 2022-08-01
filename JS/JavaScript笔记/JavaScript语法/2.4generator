@@ -1,0 +1,12 @@
+ES6标准引入的新的数据类型：generator(生成器)跟函数很像但又不同
+定义：
+    function* foo(x){ //由function*定义，
+        yield x+1;  //除了return语句,还可以用yield返回多次,相当于一个断点
+        yield x+2;
+        return x+3;
+    }
+直接调用一个generator和调用函数不一样,调用generator对象有两个方法：
+    1、不断调用generator对象的next()方法
+    next()方法会执行generator的代码，然后，每次遇到yield x;就返回一个对象{value: x, done: true/false}，然后“暂停”。返回的value就是yield的返回值，done表示这个generator是否已经执行结束了。如果done为true，则value就是return的返回值。当执行到done为true时，这个generator对象就已经全部执行完毕，不要再继续调用next()了
+    2、直接用for..of循环迭代generator对象
+    这个方法不需要我们自己判断done

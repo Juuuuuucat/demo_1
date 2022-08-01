@@ -1,0 +1,24 @@
+子组件 ==> 父组件 通信的一种方式
+  子组件想给父组件传数据，那么就要在父组件中给子组件绑定自定义事件(事件回调在父组件中)
+绑定自定义事件：
+  1、在父组件中<Demo @自定义事件名="方法"/> 或 <Demo v-on:自定义事件名="方法"/> ，然后在methods中编写方法 this.$emit('事件名',参数) 
+  2、在父组件中<Demo ref="demo"> 然后编写mounted钩子 this.$refs.demo.$on('事件名',方法) ，方法在methods中编写
+  3、若让自定义事件只能触发一次，可以使用once修饰符，或$once方法
+解绑事件：
+  在methods中编写方法 this.$off() 没有参数就是解绑所有事件
+  this.$off('事件名') 解绑这个自定义事件
+  this.$off(['事件1','事件2',..]) 解绑多个事件，注意里面是数组形式
+  this.$destory()销毁组件实例后，所有自定义事件都不奏效了（原生事件还会调用，但是可能没有效果）
+在组件上绑定原生事件，比如click时，不能直接@click=，因为Vue会将它视为自定义事件，需要加native修饰符
+  @click.native="demo"
+
+全局事件总线：任意组件间通信,可以实现兄弟之间的通信
+  利用在Vue原型上定义一个属性，这个属性是一个组件实例 或者 vm
+  beforeCreate(){
+    Vue.prototype.$bus = this
+  }
+  在要发送数据的组件中this.$bus.$emit('xxx',data)
+  接收数据 this.$bus.$on('xxx',data)
+  最好在beforeDestory钩子中，用$off()去解绑当前组件所用到的事件
+
+过渡与动画

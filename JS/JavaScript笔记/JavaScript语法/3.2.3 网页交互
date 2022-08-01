@@ -1,0 +1,14 @@
+1、元素偏移量offset：可以动态的得到该元素的位置(偏移)；返回的数值不带单位
+    element.offsetParent //返回该元素“带有定位”的父级元素，如果父级都没有定位则返回body；和e.parentNode不同，返回的是最近一级的父级，不管有没有定位
+    e.offsetTop //返回元素相对带有定位的父元素上方的偏移，如果父元素没有定位，则相对于body
+    e.offsetLeft //返回元素相对带有定位的父元素左方的偏移
+    e.offsetWidth 
+    e.offsetHeight  //可以得到元素的大小、宽度和高度，包含padding、border
+    区别：
+        offset可以得到任意样式表中的样式值，且得到的数值没有单位，而style只能得到行内样式表中的样式值，且得到的是有单位的字符串；offset等属性是只读属性，不能赋值，而style是可读写属性；因此offset更适合获得元素大小位置，style可以给元素更改值
+2、元素可视区client：获取元素可视区的相关信息，可以动态得到该元素的边框大小、元素大小等；返回的数值不带单位
+    e.clientWidth 
+    e.clientHeight //得到内容区包括padding的宽度和高度，不含边框
+3、鼠标滚动scroll
+4、动画（CSS实现动画效率比JS实现高）
+动画实现的原理就是通过定时器setInterval不断移动盒子的位置

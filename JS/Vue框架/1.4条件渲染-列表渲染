@@ -1,0 +1,81 @@
+一、计算属性computed
+    每个computed属性一般有set和get两种方法(一般不用set),不用set的简写就是：
+    computed: {
+        full: function(){return this.one+this.two}
+    }
+    其实是：
+        computed: {
+            full:{
+                [set: function(){},]
+                get: function(){}
+            }
+        }
+    当需要多次用到这个结果的时候，如果写在methods里面，它会多次调用得到结果；如果写在computed里面，它只运行一次就把结果缓存起来，之后再用到则直接在缓存中拿数据，而不是多次执行函数。
+二、v-on绑定事件监听
+    v-on:事件="处理函数" //这里的事件是不带on的;可以写函数语句，但是当语句较多时，定义成函数
+    语法糖：
+        v-on:click可以写成@click
+    当在methods中定义方法，以供事件监听调用时，需要注意参数问题：
+        1、如果不需要参数，那么可以不加()；
+            @click="btnListen"
+        2、如果需要传递参数，加()传入参数，如果这时没有传入参数，那么默认将原生事件对象event传递进去；
+        3、定义时需要传递参数，同时还要用到event，可以通过$event传入事件
+            @click="btnListen(参1,参2,$event)"
+    有些时候我们拿到事件对象event并进行一些处理，比如处理事件冒泡问题，就需要用到修饰符：
+        1、.stop：阻止事件冒泡;相当于原生event.stopPropagation()
+            @click.stop="处理函数"
+        2、.prevent：阻止默认事件;相当于event.preventDefault()
+        3、.[keyCode|keyAlias]：只有特定键触发
+            比如@keyup.enter 按一次回车键触发
+        4、.native：监听组件根元素的原生事件
+        5、.once：只触发一次回调
+三、v-if v-else-if v-else
+    Vue的条件指令可以根据表达式的值在DOM中渲染或销毁元素或组件
+    1、v-if
+        当后面的值为false时，对应的元素以及子元素就会被移除，也就是不会出现在DOM中，生命周期也会结束(这里的值可以是函数、表达式或其他数据，存在隐式转换为布尔值)
+        和v-else-if、v-else一起使用时，要求结构不能被“打断”
+    2、v-else-if
+    3、v-else
+        后面可以不跟值（写了表达式也没用），表示当上面都为false时，显示这个
+    一般用template标签包裹一些需要v-if显示的节点，而且在查看的时候是不显示的，不会破坏DOM结构，比用div要好；注意template只能和v-if一起使用，不能配合v-show
+四、v-show
+    和v-if类似，也是决定一个元素在页面是否显示，区别：
+        v-if当条件为false时，将DOM元素整个删除（发生重排重绘），v-if有更高的切换消耗；v-if切换过程中合适地销毁和重建内部的事件监听和子组件
+        而v-show当条件为false时，仅仅是将元素的display属性设为none而已（DOM元素依然还在，也是重排重绘，但是DOM树没有改变），v-show有更高的初始渲染消耗，不会触发组件的生命周期
+    如何选择？
+        当需要在显示与隐藏之间切换很频繁的时候，使用v-show，
+        当只有一次切换时，使用v-if
+    注意：使用v-if时，元素可能无法获取到，而使用v-show一定可以获取到
+五、v-for   
+    当需要有一组数据需要进行渲染时，使用v-for，类似于JS中的for循环；想生成多个谁，就在谁身上使用v-for
+    1、遍历数组
+        v-for="item in Arr" :key="index"//依次从Arr中取出item，并且在元素的内容中使用Mustache语法显示
+        v-for="(item, index) in Arr" :key="index"//index是索引值
+    2、遍历对象
+        v-for="(value, key) in Obj" :key="key"//其实完整的还有一个index，这是因为在Vue中的v-for指令中会自动给它加序号
+    3、遍历字符串(用的少)
+        v-for="(char,index) of str" :key="index"//char是str中的每个字符，index从0开始
+    4、遍历指定次数(用的少)
+        v-for="(number,index) of 5" :key="index"//number从1-5，index从0开始
+    5、绑定key属性 :key="绑定的属性值item(具有唯一性)"
+    如果没有写key，Vue会默认将index绑定为key
+六、key的原理
+    在v-for后面写:key，在页面中是不显示的，这个主要是给Vue中的虚拟DOM使用的，相当于虚拟DOM对象的标识。
+        在真实DOM渲染到浏览器页面时，中间会存在一个虚拟DOM的环节，在虚拟DOM中会帮忙创建，当数据发生变化时，Vue会根据新数据生成新的虚拟DOM，随后对初始虚拟DOM和新虚拟DOM之间进行差异对比(diff算法)：
+            1、旧虚拟DOM中找到了与新虚拟DOM相同的key，若虚拟DOM中内容没变，直接复用之前的真实DOM；如果变了，则生成新的真实DOM，替换掉页面中之前的真实DOM
+            2、没有找到相同的key，则创建新的真实DOM，随后渲染到页面
+    因此key的作用主要是为了高效的更新虚拟DOM
+    如何选择key：
+        1、最好使用每条数据的唯一标识作为key
+        2、如果不存在对数据的逆序添加、逆序删除等破坏顺序的操作，仅用于渲染列表，则使用index也没问题
+七、数组响应式方法
+    因为Vue是响应式的，所以当数据发生变化时，Vue会自动检测数据变化，视图发生对应的更新，但不是所有更改都能让视图发生变化，比如li里面遍历数组，利用一个按钮更改数组某一项的值(this.arr[0]='change')，就没有效果。（也就是直接给数组的某个索引赋值是不奏效的）
+    因此Vue中包含了一组观察数组编译的方法，使用它们改变数组会触发视图的更新(其他不会)：这些方法不是Array.prototype.push，而是对原来方法的一个包装，包装后的方法会触发视图更新
+        push() 
+        pop() 
+        shift() 
+        unshift() 
+        splice() 
+        sort() 
+        reverse()
+

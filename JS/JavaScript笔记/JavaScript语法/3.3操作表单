@@ -1,0 +1,31 @@
+表单本身也是DOM树。表单的输入框、下拉框等可以接受用户输入，所以用JS来操作表单可以获得用户输入的内容，或者对一个输入框设置新的内容
+HTML表单的输入控件主要有以下几种：
+文本框，对应的<input type="text">，用于输入文本；
+口令框，对应的<input type="password">，用于输入口令；
+单选框，对应的<input type="radio">，用于选择一项；
+复选框，对应的<input type="checkbox">，用于选择多项；
+下拉框，对应的<select>，用于选择一项；
+隐藏文本，对应的<input type="hidden">，用户不可见，但表单提交时会把隐藏文本发送到服务器。
+一、获取值
+    当我们获取了一个<input>节点的引用，就可以直接调用value获得对应的用户输入值：
+        var in = document.getElementById('input的id值');
+        in.value; //用户输入的值
+        这种方式可以应用于text、password、select、hidden。对于单选框和复选框，value属性返回的永远是HTML预设的值，我们需要获得用户是否“勾上”的选项,所以要用checked判断。
+二、设置值
+    in.value = '要设置的值'
+    对于单选框和复选框，设置checked为true或false即可
+三、提交表单
+    1、通过<form>元素的submit()方法提交一个表单
+    var form = document.getElementById('form的id');
+    form.submit(); //缺点是扰乱了浏览器对form的正常提交。浏览器默认点击<button type="submit">时提交表单，或者用户在最后一个输入框按回车键
+    2、响应<form>本身的onsubmit事件，在提交form时做修改
+四、操作文件
+在HTML表单中，可以上传文件的唯一控件就是<input type="file">
+注意：当一个表单包含<input type="file">时，表单的enctype必须指定为multipart/form-data，method必须指定为post，浏览器才能正确编码并以multipart/form-data格式发送表单的数据。
+通常，上传的文件都由后台服务器处理，JavaScript可以在提交表单时对文件扩展名做检查，以便防止用户上传无效格式的文件。
+1、File API
+    HTML5新增的，允许JavaScript读取文件内容，获得更多的文件信息
+2、回调
+    JS的一个重要的特性就是单线程执行模式，也就是说，任何时候，JS代码都不可能同时有多于1个线程在执行
+    在JavaScript中，执行多任务实际上都是异步调用(就是你喊朋友吃饭，朋友说知道了，待会忙完去找你，你就先去做别的事情了)
+    因为是异步操作，所以我们在JavaScript代码中就不知道什么时候操作结束，因此需要先设置一个回调函数，当操作完成后，JavaScript引擎将自动调用我们设置的回调函数，获得响应。

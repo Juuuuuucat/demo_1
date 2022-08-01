@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>绑定样式</title>
+  <script src="../vue.js"></script>
+</head>
+<style>
+  .basic{
+    width: 100px;
+    height: 100px;
+    border: solid 1px black;
+  }
+  .happy{
+    border: solid 2px red;
+    background-color: pink;
+  }
+  .sad{
+    border: solid 2px green;
+    background-color: gray;
+  }
+  .normal{
+    border: solid 1px black;
+    background-color: skyblue;
+  }
+  .atgui1{
+    background-color: green;
+  }
+  .atgui2{
+    font-size: large;
+    color: white;
+  }
+  .atgui3{
+    border-radius: 20%;
+  }
+
+</style>
+<body>
+  <div id="root">
+    <!-- 绑定class样式-字符串写法，适用于：样式的类名不确定，需要动态指定 -->
+    <!-- 这里不带:的class会和带:的class进行合并 -->
+    <div class="basic" :class="mood" @click="changeMood">{{nameVal}}</div><hr>
+
+    <!-- 绑定class样式-数组写法，适用于：要绑定的样式个数不确定，名字也不确定 -->
+    <div class="basic" :class="classArr">{{nameVal}}</div><hr>
+
+    <!-- 绑定class样式-对象写法，适用于：要绑定的样式个数不确定，名字确定，但要动态决定用不用 -->
+    <div class="basic" :class="classObj">{{nameVal}}</div><hr>
+
+    <!-- 绑定style样式-对象写法-->
+    <div class="basic" :style="styleObj">{{nameVal}}</div><hr>
+    <!-- 绑定style样式-数组写法-->
+    <div class="basic" :style="styleArr">{{nameVal}}</div><hr>
+
+  </div>
+  <script>
+    Vue.config.productionTip = false //关闭vue启动的生产提示
+    new Vue({
+      el: '#root',
+      data: {
+        nameVal: '旺旺雪饼',
+        mood:'normal',
+        classArr: ['atgui1','atgui2','atgui3'],
+        classObj: {
+          atgui1:true,
+          atgui2:false
+        },
+        styleObj:{
+          fontSize:'40px'
+        },
+        styleArr:[
+          {
+            fontSize:'50px',
+            color:'black'
+          },
+          {
+            backgroundColor:'gray'
+          }
+        ]
+      },
+      methods: {
+        changeMood(){
+          const arr = ['happy','sad','normal']
+          const index = Math.floor(Math.random() * 3)
+          this.mood = arr[index]
+        }
+      },
+    })
+  </script>
+</body>
+</html>

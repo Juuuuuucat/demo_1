@@ -1,0 +1,9 @@
+1、jsonp
+  就是利用script标签不受同源策略影响的特点，请求不同源的网站
+  但是这种方式只支持get请求
+  而且返回的应该是js代码，才能被浏览器解析执行
+  如果返回的不是js代码，则报错
+2、CORS
+  在服务器端设置允许跨域的响应头
+  response.setHeader('Access-Control-Allow-Origin','*')
+  * 表示允许所有页面

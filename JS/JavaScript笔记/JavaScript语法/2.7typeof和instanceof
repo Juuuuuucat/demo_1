@@ -1,0 +1,18 @@
+一、typeof
+    typeof操作符返回一个字符串，表示操作数的类型（注意typeof null返回的是object，但这只是个bug，并不是说null就是引用数据类型，并且null本身也不是对象）我们可以发现，引用类型数据用typeof来判断的话，除了function会被识别出来外，其余(object,Array,null)都输出object。
+    因此我们一般使用typeof判断一个变量是否已经定义或赋值：
+        if( typeof c != undefined){
+            //不能使用if(c)，因为如果c未声明，则会报错
+        }
+二、instanceof
+    构造函数通过new可以实例对象,instanceof能判断这个对象是否是之前那个构造函数生成的对象(也就是检查右边构造函数的原型对象是否在左边实例对象的原型链上)返回true或false
+    语法： Object instanceof Constructor //检查某个实例对象object是否是构造函数constructor创建出来的。
+
+三、区别
+    1、typeof返回一个变量的基本类型；instanceof返回的是布尔值
+    2、instanceof可以准确的判断复杂引用数据类型，但是不能正确判断基础数据类型
+    3、而typeof虽然可以判断基础数据类型(null除外)，但是引用数据类型中，除了function类型外，其他的无法判断
+四、为了检测一个对象的类型，强烈推荐使用 Object.prototype.toString 方法； 因为这是唯一一个可依赖的方式。
+    Object.prototype.toString.call([])    // "[object Array]" 注意返回的这个是字符串
+    Object.prototype.toString.call({})    // "[object Object]"
+    Object.prototype.toString.call(2)    // "[object Number]"

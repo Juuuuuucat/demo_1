@@ -1,0 +1,74 @@
+在ES5中，顶层对象的属性和全局变量是等价的，用var声明的变量既是全局对象，也是顶层对象（注意：顶层对象，在浏览器环境指的是window对象，在Node指的是global对象）
+一、var
+    使用var声明的变量存在变量提升的情况
+    使用var，我们能够对一个变量多次声明，后面的变量声明会覆盖前面的变量声明
+    在函数内部使用var声明变量的时候，该变量是局部的，如果在函数内不使用var，该变量是全局的
+二、let
+    用法类似var，但是let声明的变量，只在let命令所在的代码块内有效，具有块级作用域，且不存在变量提升。使用let声明变量前，该变量都不可用。还可以防止循环中变量变成全局变量
+    只要块级作用域内存在let命令，这个区域就不再受外部影响(暂时性死区)，例如：
+        var a = 123
+        if (true) {
+        a = 'abc' // ReferenceError
+        let a;
+        }
+    最后，let不允许在相同的作用域中重复声明。(注意是相同的作用域)
+三、const
+    const声明一个只读的常量（一般常量使用大写），一旦声明，常量的值就不能改变。这意味着，const一旦声明变量，就必须立刻初始化，不然就报错。也具有块级作用域
+    如果之前用var或let声明过变量，再用const声明同样会报错；
+    const实际上保证的并不是变量的值不能改动，而是变量指向的那个内存地址所保存的数据不得改动。对于简单类型的数据，值就保存在变量指向的那个内存地址，因此等同于常量。对于复杂类型的数据，变量指向的内存地址，保存的只是一个指向实际数据的指针，const只能保证这个指针是固定的，并不能确保变量的结构不变。例如：
+        const foo={};
+        //为foo添加一个属性，可以成功
+        foo.prop=123;
+        foo.prop;//123
+        //将foo指向另一个对象，就会报错
+        foo={};//TypeError:"foo" is read-only
+四、解构赋值
+ES6中允许按照一定模式从数组和对象中提取值，按照对应位置，对变量赋值。
+    1、数组解构
+        let arr = [1,2,3];
+        let [a,b,c] = arr; //相当于 a = 1; b = 2 ;c = 3
+        console.log(a) // 1
+        如果解构不成功，则变量的值为undefined。
+    2、对象解构
+        let person = {
+            name:'wang',
+            age:18
+        };
+        let {name, age} = person;
+        console.log(name); //'wang'
+        console.log(age); //18
+
+        let person = {
+            name:'wang',
+            age:18
+        };
+        let {name:uname, age:uage} = person; //这样写表明冒号前面是匹配的属性，后面是赋值的变量
+        console.log(uname); //'wang'
+        console.log(uage); //18
+五、箭头函数
+ES6中新增的定义函数的方式，简化函数定义
+    const fn = function (){
+        //代码体
+    }
+    const fn = () => {}
+    在箭头函数中，如果函数体中只有一句代码，并且执行结果就是函数的返回值，大括号可以省略，并且不写return：
+        const sum = (num1, num2) => num1+num2;
+        sum(1,2); //返回 3
+    如果形参只有一个，可以省略小括号
+    const sum = num => {
+        console.log(num);
+    }
+箭头函数不绑定this关键字，箭头函数中的this指向的是 函数定义位置的上下文this，也就是函数声明时所在作用域下的this的值。
+箭头函数this是静态的，也就是不能通过call方法改变
+箭头函数也不能作为构造函数，因为不绑定this
+箭头函数不能使用arguments变量
+    var age = 100;
+    var obj = {
+        age:20,
+        say: () => {
+            alert(this.age);
+        }
+    };
+    obj.say(); // 100
+    因为虽然是定义在对象里面，但对象是不能产生作用域的，因此this指向了全局作用域
+        

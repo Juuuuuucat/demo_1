@@ -1,0 +1,46 @@
+浅拷贝和深拷贝的概念只存在于引用数据类型
+一、浅拷贝：只是拷贝一层，更深层次对象级别的只拷贝引用
+    创建新的数据，这个数据有着原始数据属性值的一份精确拷贝
+    基本类型-----基本类型的值
+    引用类型-----内存地址，相当于共享内存地址
+        浅拷贝创建一个新对象，但是只复制属性指向对象的指针，而不复制对象本身，新旧对象还是共享同一块内存，修改对象属性会影响原对象
+    存在浅拷贝的现象有：
+        1、Object.assign(target, ...sources) //ES6新增的浅拷贝语法糖;从一个或多个源对象复制到目标对象，返回目标对象；如果目标对象中有和源对象相同的属性，则会被源对象覆盖
+        2、数组的slice()方法和concat()方法 //数组里有对象类型，则另一个数组和原数组的那个对象指向同一个
+        3、使用拓展运算符实现的复制
+二、深拷贝：拷贝多层，每一级别都会拷贝
+    开辟一个新的栈，两个对象属性完全相同，但是对应两个不同的地址，修改一个对象的属性，不会改变另一个
+        深拷贝会另外创造一个一模一样的对象，新对象跟原对象不共享内存，修改新对象不会改到原对象
+    常见的深拷贝方式有：
+        _.cloneDeep()
+        jQuery.extend()
+        JSON.stringify()
+        函数递归deepCopy
+    如果一个对象的属性都不是引用类型，那么可以利用for..in实现深拷贝，如果属性是引用类型那么还是浅拷贝。可以写一个函数封装深拷贝操作：
+        function deepCopy(newObj, oldObj){
+            for(let k in oldObj){
+                let item = oldObj[k];
+                if(item instanceof Array){
+                    newObj[k]=[];
+                    deepCopy(newObj[k], item);
+                } else if(item instanceof Object){
+                    newObj[k]={};
+                    deepCopy(newObj[k], item);
+                } else {
+                    newObj[k] = item;
+                }
+            }
+        }
+        或者
+        function deepCopy(oldObj){
+            let newObj = null;  //声明变量用来存储拷贝之后的内容
+            if(typeof(oldObj) == 'object' && oldObj !== null){ //判断是否是复杂类型，是则调用自己，不是则直接赋值
+                newObj = oldObj instanceof Array? []:{};
+                for(let i in oldObj){
+                    newObj[i] = deepCopy(oldObj[i]);
+                }
+            } else {
+                newObj = oldObj;
+            }
+            return newObj;
+        }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生命周期</title>
+  <script src="../vue.js"></script>
+</head>
+<body>
+<!-- 
+  vm的一生（生命周期）：
+    将要创建==>调用beforeCreate函数
+    创建完毕==>调用created函数
+    将要挂载==>调用beforeMount函数
+    挂载完毕==>调用mounted函数（重要）
+    将要更新==>调用beforeUpdate函数
+    更新完毕==>调用updated函数
+    将要销毁==>调用beforeDestroy函数（重要）
+    销毁完毕==>调用destroyed函数
+ -->
+<!-- 
+  常用的生命周期钩子：
+    mounted：发送ajax请求、启动定时器、绑定自定义事件、订阅信息等（初始化操作）
+    beforeDestroy：清楚定时器、解绑自定义事件、取消订阅消息等（收尾工作）
+  关于销毁Vue实例
+    1、销毁后借助Vue开发者工具看不到任何信息
+    2、销毁后自定义事件会失效，但原生DOM事件依然有效
+    3、一般不会在beforeDestroy操作数据，因为即使操作数据，也不会再触发更新流程了
+ -->
+  <div id="root">
+    实现打开页面之后，下面这段话开始循环淡化
+    <h2 :style="{opacity}">加油学习Vue</h2>
+    <!-- {{change()}} -->
+    <button @click="stop">停止</button>
+  </div>
+  <script>
+    Vue.config.productionTip = false //关闭vue启动的生产提示
+    const vm = new Vue({
+      el: '#root',
+      data: {
+        opacity:1
+      },
+      methods: {
+        stop(){
+          this.$destroy()
+        }
+      },
+      mounted(){
+          this.timer = setInterval(()=>{
+            vm.opacity -= 0.01
+            if(vm.opacity <= 0) vm.opacity = 1
+          },16)
+      },
+      beforeDestroy(){
+        console.log('要销毁了')
+        clearInterval(this.timer)
+      }
+    })
+/*     vm.$mount(setInterval(()=>{
+      vm.opacity -= 0.01
+      if(vm.opacity <= 0) vm.opacity = 1
+    },16)) */
+/*     setInterval(()=>{
+      vm.opacity -= 0.01
+      if(vm.opacity <= 0) vm.opacity = 1
+    },16) */
+  </script>
+</body>
+</html>

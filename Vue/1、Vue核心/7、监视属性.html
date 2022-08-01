@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>监视属性-watch</title>
+  <script src="../vue.js"></script>
+</head>
+<body>
+<!-- 
+  监视属性watch：
+    1、当被监视的属性变化时，回调函数自动调用，进行相关操作
+    2、监视的属性必须存在，才能进行监视
+    3、监视的两种写法：
+      （1）new Vue时传入watch配置
+      （2）通过vm.$watch监视（要在vm创建之后配置）
+ -->
+<!-- 
+  深度监视：
+    1、Vue中的watch默认不监测对象内部值的改变（一层）
+    2、配置deep:true 可以监测对象内部值改变（多层）
+  备注：
+    （1）Vue自身可以监测对象内部值的改变，但Vue提供的watch默认不可以
+    （2）使用watch时根据数据的具体结构，决定是否采用深度监视
+ -->
+<!-- 
+  watch和computed对比：
+    1、computed能完成的功能，watch都可以完成
+    2、watch能完成的功能，computed不一定能完成，例如watch可以进行异步操作，computed中不能开启异步任务，比如定时器
+  两个重要的小原则：
+    1、所被Vue管理的函数，最好写成普通函数，这样this的指向才是vm或组件实例对象
+    2、所有不被Vue所管理的函数（定时器的回调、ajax的回调、promise的回调等）最好写成箭头函数，这样this的指向才是vm会组件实例对象
+ -->
+  <div id="root">
+    <h2>今天天气很{{info}}</h2>
+    <button @click="change">切换天气</button><hr>
+    <h3>a的值是：{{numbers.a}}</h3>
+    <button @click="numbers.a++">点我让a++</button>
+    <h3>b的值是：{{numbers.b}}</h3>
+    <button @click="numbers.b++">点我让b++</button>
+  
+  </div>
+  <script>
+    Vue.config.productionTip = false //关闭vue启动的生产提示
+    const vm =  new Vue({
+      el: '#root',
+      data: {
+        isHot: true,
+        numbers: {
+          a: 1,
+          b: 2
+        }
+      },
+      computed:{
+        info(){
+          return this.isHot?'炎热':'凉爽'
+        }
+      },
+      methods: { //这个案例可以直接用methods实现
+        change(){
+          this.isHot = ! this.isHot
+        }
+      },
+      watch: {
+        isHot:{
+          immediate:true, //默认false，改为true之后，在初始化时handler就调用一下
+          //当isHot发生改变时，handler被调用，他默认接受两个参数
+          handler(newValue,oldValue){
+            console.log('isHot被修改了')
+          }
+        },
+        //如果不考虑immediate和deep，监视属性可以简写成
+        // isHot(newValue,oldValue){
+        //     console.log('isHot被修改了')
+        //   }
+
+        //监视多级结构中某个属性的变化
+  /*   'numbers.a':{
+          handler(newValue,oldValue){
+            console.log('a被修改了')
+          }
+        }, */
+
+        //监视多级结构中所有属性的改变
+        numbers:{
+          deep:true, //深度监视
+          handler(){
+            console.log('numbers改变了');
+          }
+        },
+
+      }
+    })
+
+/*  vm.$watch('isHot',{
+      immediate:true, //默认false，在初始化时handler就调用一下
+      //当isHot发生改变时，handler被调用，他默认接受两个参数
+      handler(newValue,oldValue){
+        console.log('isHot被修改了',newValue,oldValue)
+      }
+    }) 
+    简写：
+      vm.$watch('isHot',function(newValue,oldValue){
+        console.log('isHot被修改了',newValue,oldValue)
+      })
+      这里的函数不要写成箭头函数，不然this会变为window
+*/
+
+  </script>
+</body>
+</html>

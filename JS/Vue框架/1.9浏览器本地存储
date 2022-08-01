@@ -1,0 +1,8 @@
+localStorage：浏览器关闭了数据也还在，需要手动清除
+  在浏览器保存数据：window.localStorage.setItem(key, value) //把键值对添加到存储中，如果键名存在，则更新对应的值
+    读取：localStorge.getItem(key) //如果key对应的value获取不到，那么返回值是null
+    删除：localStorge.removeItem(key)
+    清空：localStorge.clear()
+sessionStorage：只要浏览器关闭了数据也都没了
+  其他方法和上面的一样
+

@@ -1,0 +1,29 @@
+一、JS的本地存储主要有以下四种：
+    1、cookie
+        cookie类型为小型文本文件，某些网站为了辨别用户身份而存储在用户本地终端上的数据，是为了解决HTTP无状态导致的问题。
+        作为一段一般不超过4KB的小型文本数据，它由一个名称name、一个值value和其它几个用于控制cookie有效期、安全性、使用范围的可选属性组成。（cookie的数据会自动的传递到服务器，服务器端也可以写cookie到客户端）
+        但是cookie在每次请求中都会被发送，如果不使用HTTPS并对其加密，其保存的信息很容易被窃取，导致安全风险。
+        cookie的使用：document.cookie = 'name=value';
+        cookie的修改：
+        Set-Cookie:name=aa; domain=aa.net;path=/  # 服务端
+        document.cookie: name=bb; domain=aa.net; path=/  # 客户端(要确定domain和path属性都是相同的才可以，其中有一个不同都会创建出一个新的cookie)
+        cookie的删除：最常用的方法就是给cookie设置一个过期的时间，这样cookie过期后会被浏览器删除
+    2、localStorage（HTML5新方法）
+        localStorge.setItem('键','值'); //设置存储
+        localStorge.getItem('键'); //获取
+        localStorge.removeItem('键'); //删除
+        localStorge.clear(); //删除所有的数据
+        持久化的本地存储，除非主动删除数据，否则数据是永远不会过期的；以键值对的形式存储使用；存储的信息在同一域中是共享的（同源可以读取和修改）；localStorage本质上是对字符串的读取，如果存储内容多的话会消耗内存空间，导致页面变卡。无法像cookie一样设置过期时间，只能存入字符串，无法直接存对象。
+    3、sessionStorage
+        sessionStorage.setItem('键','值');
+        sessionStorge.getItem('键');
+        sessionStorge.removeItem('键');
+        sessionStorge.clear();
+        会话级存储，以键值对的形式存储使用，在同一个窗口(页面)下数据可以共享和localStorage使用方法基本一致，唯一不同的是生命周期：一旦页面(会话)关闭，sessionStorage数据就会自动删除（localStorage和sessionStorage不会自动把数据发给服务器，仅在本地保存） 
+    4、indexedDB
+        一种低级API，用于客户端存储大量结构化数据(包括文件、blobs)。该API使用索引来实现对该数据的高性能搜索。
+二、应用场景
+    1、标记用户与跟踪用户行为的情况，推荐用cookie
+    2、适合长期保存在本地的数据(令牌)，推荐用localStorage
+    3、敏感账户一次性登录，推荐用sessionStorage
+    4、存储大量数据的情况、在线文档保存编辑历史的情况，推荐使用indexedDB

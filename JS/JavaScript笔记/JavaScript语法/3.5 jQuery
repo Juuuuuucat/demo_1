@@ -1,0 +1,148 @@
+jQuery是使用很广泛的一个库，其实就是一个文件，里面封装的许多的函数和方法：
+    消除浏览器差异：不需要自己写冗长的代码来针对不同的浏览器来绑定事件、编写AJAX等代码；
+    简洁的操作DOM的方法；
+    轻松实现动画、修改CSS等各种操作
+一、$符号
+    jQuery把所有功能全部封装在一个全局变量jQuery中，别名就是$(相当于window)($===jQuery)；$本质上就是一个函数，但是函数也是对象，于是$可以直接调用，它还有很多其他属性
+    如果$这个变量不幸被占用了，而且还不能改，那我们就只能先调用jQuery.noConflict()让jQuery把$变量交出来，然后就只能使用jQuery这个变量。（原理就是jQuery在占用$之前，先在内部保存了原来的$,调用jQuery.noConflict()时会把原来保存的变量还原）
+二、jQuery对象和DOM对象
+    用原生JS获取过来的对象就是DOM对象，用jQuery方法获取过来的对象就是jQuery对象；本质是通过$把DOM元素进行了包装。
+    jQUery对象只能使用jQuery方法，DOM对象则使用原生的JavaScript属性和方法，不能混用！！！
+    但是两个对象之间可以相互转换：因为原生JS比jQuery更大，原生的一些属性和方法jQuery对象没有封装，要想使用这些属性和方法就需要把jQuery对象转换为DOM对象才能使用。
+    1、DOM-->jQuery
+        $(DOM对象)
+    2、jQuery-->DOM
+        $("选择器")[index] 或者 $("选择器").get(index)
+三、jQuery选择器：快速定位到一个或多个DOM节点$("CSS选择器")记得加引号
+    隐式迭代：如果是多个jQuery对象，则存在隐式迭代，也就是给匹配到的所有元素进行循环遍历，执行了对应的方法，不需要我们再去循环，简化了我们的操作，方便调用
+    1、$("#id")---document.getElementById("id")
+        var div = $("#id") //返回的对象是jQuery对象，jQuery对象类似数组，每个元素都是一个引用了DOM节点的对象
+        如果ID为id的div存在，返回的jQuery对象[<div id="id">..</div>];不存在，返回[]
+    2、$("p")---document.getElementByTagName("p")
+        var ps = $("p") //返回所有<p>节点
+        ps.length //页面中<p>节点个数
+    3、$(".red")---document.getElementByClassName("red")
+        var b = $(".red.green") //由于一个节点可以有多个class，返回所有同时包含red和class的节点 <div class="red green">
+    4、按属性查找：$("[属性名=。]")
+        var em = $("[属性名=属性值]") //找出<??? 属性名="属性值"> (当属性值包含空格等特殊字符时，需要用双引号括起来)
+        var ic = $("[属性名^=前缀]") //找出所有以该前缀开头的的DOM
+        var na = $("[属性名$=后缀]") //找出所有以该后缀结尾的的DOM
+    5、组合查找(将上面的选择器组合使用)
+        var q = $("div[name=div]") //标签+属性
+        var w = $("div.red") //标签+class
+    6、多项选择器(把多个选择器用,组合起来一块选)
+        $("p,div") //把<p>和<div>都选出来
+        注意，选出来的元素按照它们在HTML中出现的顺序排列，不会有重复的元素
+    7、层级选择器(缩小了选择范围，首先定位父节点，才能选择相应子节点)
+        $("ul>li") 子代，只有亲儿子
+        $("ul li") 后代，包括儿子、孙子。。。
+    8、筛选选择器
+        $("xxx:选择器")
+        :input 可以选择<input><textarea><select>和<button>
+        :file 可以选择<input type="file">，和input[type=file]一样
+        $("li:first"); 获取第一个li
+        $("li:last"); 获取最后一个li
+        $("li:eq(2)"); 获取到的li中，选择索引号为2的li，索引号从0开始
+        $("li:odd"); 选择索引号是奇数的li
+        $("li:even"); 偶数
+    9、筛选方法(下面前面省略了 $("选择器"))
+       .parent() //返回最近的父级
+       .children("选择器") //返回最近一级儿子
+       .find("选择器") //相当于后代选择
+       .siblings("选择器") //除自身以外所有亲兄弟元素
+       .eq(index) //选择索引号为2的元素 
+       .hasClass(class) //检查是否含有特定的类名，有就返回true
+jQuery中的排他思想不需要用循环实现了，因为里面有隐式迭代，可以先给目标元素设置样式，然后将其余的兄弟去掉样式
+三、样式操作
+    $("选择器").css("name"[,"value"]); 如果只有属性名，则它返回属性值；如果两个都有，则设置属性
+    $("选择器").css({
+        "color":"red",
+        "font-size":"30px"
+    }) 参数可以是对象形式，方便设置多组样式，属性名和属性值用冒号分开
+    有时候有很多样式，我们一般是直接写一个类，然后可以在元素中添加这个类名设置样式：
+        $("选择器").addClass("类名") 添加
+        $("选择器").removeClass("类名") 删除
+        $("选择器").toggleClass("类名") 切换，也就是将类名加上或删除，来回切换
+    注意这里对类名的操作和JS原生不一样，原生会直接覆盖之前的类名，而jQuery里面的类名操作只是对指定类名你进行操作，不影响原先的类名
+四、动画效果方法
+    1、show([speed,easing,fn]) 参数都可以省略，省略后直接显示；speed显示速度，可以写毫秒数值，也可以写slow、normal、fast；easing用来切换效果，默认是swing(慢快慢)，还可以改为linear(匀速)；fn是回调函数,在动画完成时执行，每个元素执行一次
+    2、hide([speed,easing,fn])
+    3、toggle([speed,easing,fn])
+    4、slideDown、slideUp、slideToggle和上面用法一样，只是上面的动画都是往左上角变化，这个是上下变化
+    5、hover([over,]out) over就是鼠标移到元素上触发的函数，out是鼠标移开触发的函数;如果只写一个函数，那么鼠标经过和移开都会触发这个函数，一般配合toggle使用
+需要注意，动画或效果一旦触发就会执行，如果多次触发，就造成多个动画或者效果排队执行，可以使用stop()方法结束上一次动画，一定要写到动画或效果的前面
+    6、fadeIn、fadeOut、fadeToggle淡入淡出的效果
+    7、animate(params,[speed],[easing],[fn]) //自定义动画,params想要更改的样式属性，以对象形式传递，必须写
+五、获取属性值的方法
+    .prop("属性名") //获得属性
+    .prop("属性名","属性值") //设置属性
+    .attr("自定义属性名") //类似原生getAttribute()
+    .attr("属性名","属性值")
+    data() //该方法可以在指定的元素上存取数据，存在内存中，并不会修改DOM元素结构。一旦页面刷新，之前存在的数据都将被移除
+六、修改内容
+    html() //获取 元素内容，如果有参数就设置元素内容；相当于innerHTML
+    text() //元素文本内容；相当于innerText
+    val() //获取设置表单值
+七、元素操作
+jQuery隐式迭代是对同一类元素做了同样的操作。如果想要给同一类元素做不同操作，就需要用到遍历
+    1、each(function(index, domEle){//}) 遍历匹配的每一个元素，主要是用DOM处理，each每一个，回调函数有两个参数：index是每个元素的索引号，domEle是每个DOM元素对象，注意不是jQuery对象，要想用jQuery方法，记得转换$(domELe);
+        $.each($("选择"),function(i,Ele){})
+    2、.append("jQuery对象") //添加到最后面
+        .prepend() //添加到孩子节点最前面
+        .after() //添加到该节点的前面
+        .before() //添加到该节点的后面
+        .remove() //删除自己
+        .empty() //删除匹配元素里面的子节点
+八、尺寸、位置操作
+    width()/height() 取得元素宽度和高度，只算width和height
+    innerWidth()/innerHeight() 取得匹配元素宽度和高度，包括padding
+    outerWidth()/outerHeight() 包括padding、boeder，如果里面有参数true，则还包含margin
+    offset() 获取、设置相对于文档的偏移坐标，与父元素无关
+    position() 获取距离带有定位的父级的偏移坐标，只能获取，不能设置
+    scrollTop() 被卷去的头部 scrollLeft() 被卷去的左侧 //有参数则是设置
+九、事件
+    .click(function(){})
+    element.on({ //直接绑定多个事件
+        click:function(){},
+        mouseenter:function(){}
+    })
+    还可以实现事件委派(也就是事件代理)操作
+    $("ul").on("click","li",function(){}) click事件绑定在ul上，触发的节点是li；并且on可以给未来动态创建的元素绑定事件
+    off() 解绑事件，没有参数就解除所有；有参数就解除那一个事件
+    如果有事件只想触发一次，通过.one("click",function(){})
+    如果想要事件自动触发，比如轮播图自动播放功能跟点击右侧按钮一致，可以利用定时器自动触发右侧按钮点击事件，不必鼠标点击触发：
+        直接.click() 没有回调函数，就是直接触发
+        .triggle("事件")
+        .triggleHandler("事件") //这个和上面差不多，就是不会触发元素的默认行为
+    事件被触发，就会有事件对象event，和原生JS差不多
+        event.stopPropagation() //阻止冒泡行为
+        event.preventDefault()或者return false //阻止默认行为
+十、其他方法
+    1、如果想把某个对象拷贝(合并)给另外一个对象使用，可以使用$.extend()方法。
+        $.extend([deep],target,obj1,[obj2,.])
+        deep 默认false浅拷贝，设为true就是深拷贝
+        target 要拷贝的目标对象，不冲突的属性，会添加到这里，同样的属性会被覆盖
+        object1待拷贝到的第一个对象
+    2、多库共存
+    jQuery使用$作为标识符，如果其他JS库也用$作为标识符，这样会引起冲突,多库共存就是让jQuery和其他JS库不存在冲突，可以同时存在
+        1、把$改为jQuery
+        2、让jQuery释放$控制权，自己再定义一个别名
+            let jQ = $.noConflict();
+        或者 let jQ = jQuery.noConflict();
+    3、插件
+        jQuery插件库：http://www.jq22.com
+        jQuery之家：http://www.htmleaf.com
+    使用步骤
+        引入相关文件、复制相关html、css、和js插件文件
+    4、懒加载
+    当页面滑动到可视区域，再显示图片。图片使用延迟加载可提高网页下载速度，也能帮助减轻服务器负载
+六、扩展
+    当我们使用jQuery对象的方法时，由于jQuery对象可以操作一组DOM，而且支持链式操作，所以用起来非常方便。但是jQuery内置的方法永远不可能满足所有的需求，我们可以扩展jQuery来实现自定义方法，这种方式也称为编写jQuery插件。
+    给jQuery对象绑定一个新方法是通过扩展$.fn对象实现的
+        $.fn.自定义方法名 = function(){};
+    编写jQuery插件的原则：
+        1、给$.fn绑定函数，实现插件的代码逻辑
+        2、插件函数最后要return this;以支持链式调用
+        3、插件函数要有默认值，绑定在 $.fn.自定义方法名.defaults 上
+        4、用户在调用时可传入设定值以便覆盖默认值
+        

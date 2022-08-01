@@ -1,0 +1,1 @@
+fetch是web提供的一个可以获取异步资源的api，它返回的是promise对象

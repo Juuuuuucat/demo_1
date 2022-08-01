@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>localStorage和sessionStorage</title>
+</head>
+<body>
+  <h2>localStorage</h2>
+  <button onclick="saveData()">点我保存本地数据</button>
+  <button onclick="readData()">点我读取本地数据</button>
+  <button onclick="deleteData()">点我删除本地数据</button>
+  <button onclick="clearData()">点我清空本地数据</button>
+  <script>
+    let p = {
+      name: '旺旺',
+      age:18
+    }
+    function saveData(){
+      window.localStorage.setItem('msg',888)
+      localStorage.setItem('person',JSON.stringify(p))
+    }
+    function readData(){
+      alert(localStorage.getItem('person'))
+    }
+    function deleteData(){
+      localStorage.removeItem('msg')
+    }
+     function clearData(){
+      localStorage.clear()
+     }
+/* 
+  sessionStorage跟localStorage的API都是一样的,不同的是sessionStorage存储的数据在浏览器关闭后就没有了,localStorage会一直在 
+*/
+/* 
+  在使用getItem方法获取数据时,如果不存在则返回null
+  JSON.parse(null)的结果依然是null
+*/
+  </script>
+</body>
+</html>

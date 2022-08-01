@@ -1,0 +1,42 @@
+BOM(Browser Object Model)浏览器对象模型，提供了独立于内容与浏览器窗口进行交互的对象；其作用就是访问浏览器的功能，比如进行页面的后退、前进、刷新、浏览器窗口发生变化、滚动条的滚动等。
+浏览器的全部内容可以看成DOM，整个浏览器可以看成BOM
+DOM和BOM的区别：
+    DOM就是把文档当作一个对象来看待；BOM把浏览器当作一个对象
+    DOM的顶级对象是document；BOM的顶级对象是window
+    DOM主要学习操作页面元素；BOM学习浏览器窗口交互的一些对象
+    DOM是W3C标准规范；BOM是浏览器厂商在各自浏览器上定义的，缺少规范，兼容性较差
+1、window
+    BOM的核心对象是window，它表示浏览器的一个实例
+    在浏览器中，window对象有双重角色，既是浏览器窗口的一个接口，又是全局对象。因此所有在全局作用域中声明的变量、函数都会变成window对象的属性和方法(注意: window下的一个特殊属性window.name)
+    常用事件：
+        1、window.onload = function(){};或者window.addEventListener('load',function(){}); //当文档内容完全加载完成会触发该事件，调用处理函数
+        只不过传统绑定事件方法后注册的会覆盖前面的，前面的不会生效；而addEventListener没有限制
+        2、document.addEventListener('DOMContentLoaded',function(){}) //load是等页面内容全部加载完毕，包含dom元素、图片、CSS、flash等；而DOMContentLoaded是DOM加载完毕，不包含图片、flash、css等就可以执行，加载速度比load更快一些
+        3、resize事件 //只要窗口大小发生像素变化，就会触发，经常用来完成响应式布局
+        4、setTimeout(调用函数[,延迟毫秒数]) //延迟毫秒如果省略，默认是0；调用函数可以直接写匿名函数，也可以写函数名；这里的window可以省略
+            这里的调用函数也称为回调函数callback；因为普通函数是按代码顺序调用的，而这里的函数需要等待时间，时间到了再回头调用这个函数。之前的onclik事件里面的函数也是回调函数
+        clearTimeout(定时器); //window可以省略,里面的参数是定时器的标识符
+        5、setInterval(调用函数[,间隔毫秒数]); //setInterval每隔指定时间就调用这个函数，一直重复调用
+        clearInterval(定时器); //取消的先前调用setInterval建立的定时器,window可以省略,里面的参数是定时器的标识符
+2、location
+    获取或设置当前页面的URL信息，并且可以用于解析URL，因为返回的是一个对象，所以也叫它location对象
+        URL统一资源定位符，是互联网上标准资源的地址。互联网上每个文件都有一个唯一的URL，它包含的信息指出了文件的位置以及浏览器应该怎么处理它。
+    location.href //获取或(= 'www.xx.com')设置整个URL
+    location.search //返回参数
+    location.hash //返回片段 #后面内容，常用于链接锚点
+    location.assign() //跟href一样可以跳转，也称为重定向页面
+    location.replace() //替换当前页面，不记录历史，不能后退
+    location.reload() //重新加载页面，相当于刷新，如果加true，则强制刷新
+3、navigator
+    主要用来获取浏览器的属性信息，区分浏览器类型。属性较多且兼容性比较复杂
+    比较常用的是navigator.userAgrnt，返回由客户机发送服务器的user-agent头部的值，可以判断手机端还是pc端
+4、screen
+    保存的是客户端能力信息，也就是浏览器窗口外面的客户端显示器的信息，比如像素宽度和像素高度
+5、history
+    主要用来操作浏览器URL的历史记录，可以通过参数向前，向后，或者向指定URL跳转
+    history.forward()：向前跳转一个页面
+    history.back()：向后跳转一个页面
+    history.length：获取历史记录数
+    history.go()
+        接收字符串参数时，向最近的一个记录中包含指定字符串的页面跳转
+        接受整数数字时，正数表示向前跳转指定的页面；负数表示向后跳转指定的页面

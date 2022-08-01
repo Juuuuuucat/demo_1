@@ -1,0 +1,7 @@
+BFC即块级格式化上下文，是页面中的一块渲染区域，有一套属于自己的渲染规则（BFC是一个独立的布局环境，其中的元素布局是不受外界的影响，并且在一个BFC中，块盒与行盒都会垂直的沿着其父元素的边框排列）简单来说，BFC是一个完全独立的空间（布局环境），让空间里的子元素不会影响到外面的布局，反之亦然
+触发BFC的条件有：
+    根元素，即HTML元素
+    浮动元素：float为left、right
+    overflow为auto、scroll、hidden
+    display为inline-block、inltable-cell、table-caption、table、inline-table、flex、inline-flex、grid、inline-grid
+    position为absolute、fixed
